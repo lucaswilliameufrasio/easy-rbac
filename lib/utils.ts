@@ -1,8 +1,9 @@
 'use strict'
 
 import { CanOperation, Roles, StorageAdapter, StoredRole } from "./types"
+import Debug from 'debug'
 
-const debug = require('debug')('rbac')
+export const debug = Debug('rbac')
 
 export async function any(promises: Promise<any>[]) {
   if (promises.length < 1) {
