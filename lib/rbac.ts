@@ -1,42 +1,45 @@
 'use strict'
 
-import { Roles } from "./types"
-import { isPromise } from "./utils"
+import { InMemoryStorage } from './in-memory-storage'
+import { Roles, StorageAdapter } from './types'
+import { isPromise } from './utils'
 
-const debug = require('debug')('rbac')
-const { any, parseRoleMap } = require('./utils')
+import Debug from 'debug'
+import { any, parseAndSaveRoles } from './utils'
+const debug = Debug('rbac')
 
 export class RBAC {
   _ready: boolean
   _init: Promise<void>
-  roles: Map<string, any>
+  storage: StorageAdapter
 
-  constructor(roles: Roles | Promise<Roles> | (() => Promise<Roles>)) {
+  constructor(
+    roles: Roles | Promise<Roles> | (() => Promise<Roles>),
+    options: Partial<{
+      storageAdapter: StorageAdapter
+    }>,
+  ) {
+    this.storage = options?.storageAdapter ?? new InMemoryStorage()
     this._ready = false
-    if (!isPromise(roles)) {
-      debug('sync init')
-      // Add roles to class and mark as ready
-      this.roles = parseRoleMap(roles)
-      this._ready = true
-    } else {
-      debug('async init')
-      this._init = this.asyncInit(roles)
-    }
+    debug('initializing')
+    this._init = this.init(roles)
   }
 
-  async asyncInit(roles) {
-    // If opts is a function execute for async loading
-    if (typeof roles === 'function') {
-      roles = await roles()
-    }
-    if (typeof roles.then === 'function') {
-      roles = await roles
+  async init(roles: any) {
+    if (isPromise(roles)) {
+      if (roles.then) {
+        roles = await roles
+      } else {
+        // If opts is a function execute for async loading
+        roles = await roles()
+      }
     }
 
     // Add roles to class and mark as ready
-    this.roles = parseRoleMap(roles)
+    await parseAndSaveRoles(roles, this.storage)
     this._ready = true
   }
+
   async can(role, operation, params, cb = undefined) {
     if (typeof cb === 'function') {
       throw new Error('v3 does not support callbacks, you might try v2')
@@ -62,8 +65,11 @@ export class RBAC {
       debug('Expected second parameter to be string : operation')
       return false
     }
+    console.log('wat')
 
-    const $role = this.roles.get(role)
+    const $role = await this.storage.get(role)
+
+    debug('$role', $role)
 
     if (!$role) {
       debug('Undefined role')
@@ -129,8 +135,12 @@ export class RBAC {
     throw new Error('something went wrong')
   }
 
-  static create(opts) {
-    return new RBAC(opts)
+  static create(
+    roles: Roles | Promise<Roles> | (() => Promise<Roles>),
+    options?: Partial<{
+      storageAdapter: StorageAdapter
+    }>,
+  ) {
+    return new RBAC(roles, options)
   }
 }
-

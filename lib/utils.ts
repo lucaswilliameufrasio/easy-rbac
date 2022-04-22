@@ -1,5 +1,7 @@
 'use strict'
 
+import { CanOperation, Roles, StorageAdapter, StoredRole } from "./types"
+
 const debug = require('debug')('rbac')
 
 export async function any(promises: Promise<any>[]) {
@@ -28,26 +30,20 @@ export function isGlob(string: string) {
   return string.includes('*')
 }
 
-export function globToRegex(string) {
+export function globToRegex(string: string) {
   return new RegExp('^' + string.replace(/\*/g, '.*'))
 }
 
-export function parseRoleMap(roles) {
-  debug('parsing rolemap')
+export async function parseAndSaveRoles(roles: Roles, storage: StorageAdapter) {
+  debug('parsing and saving')
   // If not a function then should be object
   if (typeof roles !== 'object') {
     throw new TypeError('Expected input to be object')
   }
 
-  let map = new Map()
-
   // Standardize roles
-  Object.keys(roles).forEach((role) => {
-    let roleObj: {
-      can: Record<string, any>
-      canGlob: any[]
-      inherits?: any[]
-    } = {
+  const rolesPromise = Object.keys(roles).map(async (role) => {
+    let roleObj: StoredRole = {
       can: {},
       canGlob: [],
     }
@@ -73,7 +69,7 @@ export function parseRoleMap(roles) {
       })
     }
     // Iterate allowed operations
-    roles[role].can.forEach((operation) => {
+    roles[role].can.forEach((operation: CanOperation) => {
       // If operation is string
       if (typeof operation === 'string') {
         // Add as an operation
@@ -106,10 +102,10 @@ export function parseRoleMap(roles) {
       throw new TypeError('Unexpected operation type' + operation)
     })
 
-    map.set(role, roleObj)
+    storage.set(role, roleObj)
   })
 
-  return map
+  await Promise.all(rolesPromise)
 }
 
 export function isPromise(promise: any): boolean {
