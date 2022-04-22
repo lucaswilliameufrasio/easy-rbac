@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/DeadAlready/easy-rbac#readme",
   "dependencies": {
-    "debug": "^4.3.3",
-    "ioredis": "^5.0.4"
+    "debug": "^4.3.3"
   },
   "devDependencies": {
+    "ioredis": "^5.0.4",
     "@types/ioredis": "^4.28.10",
     "@types/mocha": "^9.1.1",
     "@types/node": "^17.0.25",
