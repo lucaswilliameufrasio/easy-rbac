@@ -1,12 +1,19 @@
 'use strict'
 
+import { Roles } from "./types"
+import { isPromise } from "./utils"
+
 const debug = require('debug')('rbac')
 const { any, parseRoleMap } = require('./utils')
 
-class RBAC {
-  constructor(roles) {
+export class RBAC {
+  _ready: boolean
+  _init: Promise<void>
+  roles: Map<string, any>
+
+  constructor(roles: Roles | Promise<Roles> | (() => Promise<Roles>)) {
     this._ready = false
-    if (typeof roles !== 'function' && typeof roles.then !== 'function') {
+    if (!isPromise(roles)) {
       debug('sync init')
       // Add roles to class and mark as ready
       this.roles = parseRoleMap(roles)
@@ -30,7 +37,7 @@ class RBAC {
     this.roles = parseRoleMap(roles)
     this._ready = true
   }
-  async can(role, operation, params, cb) {
+  async can(role, operation, params, cb = undefined) {
     if (typeof cb === 'function') {
       throw new Error('v3 does not support callbacks, you might try v2')
     }
@@ -121,10 +128,9 @@ class RBAC {
     debug('Shouldnt have reached here, something wrong, reject')
     throw new Error('something went wrong')
   }
+
+  static create(opts) {
+    return new RBAC(opts)
+  }
 }
 
-RBAC.create = function create(opts) {
-  return new RBAC(opts)
-}
-
-module.exports = RBAC

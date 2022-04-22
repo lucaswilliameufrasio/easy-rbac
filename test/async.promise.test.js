@@ -1,7 +1,7 @@
 'use strict';
 
 
-const RBAC = require('../lib/rbac');
+const {RBAC} = require('../lib/rbac');
 let data = require('./data');
 
 const {shouldBeAllowed, shouldNotBeAllowed, catchError} = require('./utils');

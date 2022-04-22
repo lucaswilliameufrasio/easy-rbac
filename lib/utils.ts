@@ -111,3 +111,11 @@ export function parseRoleMap(roles) {
 
   return map
 }
+
+export function isPromise(promise: any): boolean {
+  return (
+    !!promise &&
+    (typeof promise.then === 'function' ||
+      promise.constructor.name === 'AsyncFunction')
+  )
+}
