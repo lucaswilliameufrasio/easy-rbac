@@ -2,10 +2,9 @@
 
 import { InMemoryStorage } from './in-memory-storage'
 import { Roles, StorageAdapter } from './types'
-import { isPromise } from './utils'
-
+import { any, parseAndSaveRoles, isPromise } from './utils'
 import Debug from 'debug'
-import { any, parseAndSaveRoles } from './utils'
+
 const debug = Debug('rbac')
 
 export class RBAC {
