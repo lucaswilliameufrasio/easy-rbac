@@ -40,7 +40,7 @@ export class RBAC {
     this._ready = true
   }
 
-  async can(role, operation, params, cb = undefined) {
+  async can(role, operation, params = undefined, cb = undefined) {
     if (typeof cb === 'function') {
       throw new Error('v3 does not support callbacks, you might try v2')
     }
