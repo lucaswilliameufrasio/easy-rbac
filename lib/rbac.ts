@@ -65,11 +65,8 @@ export class RBAC {
       debug('Expected second parameter to be string : operation')
       return false
     }
-    console.log('wat')
 
     const $role = await this.storage.get(role)
-
-    debug('$role', $role)
 
     if (!$role) {
       debug('Undefined role')
