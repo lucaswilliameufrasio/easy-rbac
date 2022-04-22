@@ -53,6 +53,10 @@ async function main() {
     }
   }
 
+  const allowed = await rbac.can('user', 'delete-the-system')
+
+  console.log('allowed to delete the system?', allowed)
+
   process.exit(0)
 }
 
