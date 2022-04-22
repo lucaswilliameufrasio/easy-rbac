@@ -9,9 +9,9 @@ import { any, parseAndSaveRoles } from './utils'
 const debug = Debug('rbac')
 
 export class RBAC {
-  _ready: boolean
-  _init: Promise<void>
-  storage: StorageAdapter
+  private _ready: boolean
+  private _init: Promise<void>
+  private storage: StorageAdapter
 
   constructor(
     roles: Roles | Promise<Roles> | (() => Promise<Roles>),
