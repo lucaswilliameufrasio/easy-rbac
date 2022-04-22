@@ -4,7 +4,7 @@
   "description": "RBAC implementation for Node.js",
   "main": "lib/rbac.js",
   "scripts": {
-    "test": "mocha test/*"
+    "test": "mocha -r ts-node/register test/*"
   },
   "repository": {
     "type": "git",
