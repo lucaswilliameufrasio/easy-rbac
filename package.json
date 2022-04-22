@@ -5,7 +5,8 @@
   "main": "lib/rbac.js",
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig-build.json",
-    "test": "mocha -r ts-node/register test/*"
+    "test": "mocha -r ts-node/register test/**",
+    "test:watch": "npm run test -- --watch-files lib,test --watch"
   },
   "repository": {
     "type": "git",
