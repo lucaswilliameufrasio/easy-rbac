@@ -2,7 +2,7 @@
   "name": "easy-rbac",
   "version": "3.2.0",
   "description": "RBAC implementation for Node.js",
-  "main": "lib/rbac.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig-build.json",
     "test": "mocha -r ts-node/register test/**",
