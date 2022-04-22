@@ -5,10 +5,13 @@ export interface StorageAdapter {
 
 export type CanOperation = string | { name: string; when: Promise<boolean> }
 
-export type Roles = {
-  can: Array<CanOperation>
-  inherits: string[]
-}
+export type Roles = Record<
+  string,
+  {
+    can: Array<CanOperation>
+    inherits: string[]
+  }
+>
 
 export type StoredRole = {
   can: Record<string, any>
