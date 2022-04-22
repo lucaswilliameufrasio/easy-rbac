@@ -1,5 +1,5 @@
 import { RBAC } from './rbac'
-import { StorageAdapter } from './types'
+import { StorageAdapter, StoredRole } from './types'
 
 export default RBAC
-export { RBAC, StorageAdapter }
+export { RBAC, StorageAdapter, StoredRole }

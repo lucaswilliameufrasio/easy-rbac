@@ -3,7 +3,7 @@
 // Run with
 // DEBUG=rbac npx ts-node examples/redis.ts
 import IORedis, { Redis } from 'ioredis'
-import { RBAC, StorageAdapter } from '../lib'
+import { RBAC, StorageAdapter, StoredRole } from '../lib'
 
 class RedisStorageAdapter implements StorageAdapter {
   private redisClient: Redis
@@ -18,11 +18,11 @@ class RedisStorageAdapter implements StorageAdapter {
     })
   }
 
-  async set(key: string, value: any): Promise<void> {
+  async set(key: string, value: StoredRole): Promise<void> {
     await this.redisClient.set(key, JSON.stringify(value))
   }
 
-  async get(key: string): Promise<any> {
+  async get(key: string): Promise<StoredRole> {
     const valueStringified = await this.redisClient.get(key)
 
     const value = JSON.parse(valueStringified)
